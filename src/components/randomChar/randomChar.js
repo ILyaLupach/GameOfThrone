@@ -1,19 +1,25 @@
 import React, {Component} from 'react';
+import './randomChar.css';
+import gotServices from "../gotservices/gotServices"
 import Spiner from "../spiner/spiner";
 import Error from "../error/error";
-import GotService from "../../services/gotServices";
-import './randomChar.css';
+
 
 
 export default class RandomChar extends Component {
     
-    constructor() {
-        super();
+  
+
+    componentDidMount(){
         this.updateChar();
-        /* setInterval(this.onCharLoaded, 5000); */
+        const tim = setInterval(this.updateChar, 6000); 
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.tim);
     }
        
-    got = new GotService();
+    gotServices = new gotServices();
     
     state = {
         char: {},
@@ -22,9 +28,9 @@ export default class RandomChar extends Component {
     }
     
     
-    onCharLoaded = async (char) => {
+    onCharLoaded = (char) => {
         if (char.born === "") {
-            await this.updateChar();}
+            this.updateChar()}
         this.setState({char, loading: false})
     };
     
@@ -34,9 +40,9 @@ export default class RandomChar extends Component {
             loading: false
         })
     }
-    updateChar() {
+    updateChar = () => {
         const id = Math.floor(Math.random()*140+25);
-        this.got.getCharacters(id)
+        this.gotServices.getCharacters(id)
         .then(this.onCharLoaded)
         .catch((this.onError))
     }
@@ -62,7 +68,7 @@ const View = (state) => {
     let {char: {name, gender, born, died, culture}} = state;
 
     
-    born = (born === "") ? "is unknown" : born;
+
     died = (died === "") ? "is unknown" : died;
     culture = (culture === "") ? "is unknown" : born;
 
